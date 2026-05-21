@@ -1,254 +1,684 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Exam Policy</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      html {
-        scroll-snap-type: y mandatory;
-      }
-      body {
-        font-family: "Noto Sans", Arial, sans-serif;
-        scroll-snap-align: start;
-        max-width: 1080px;
-        margin: auto;
-        line-height: 1.5;
-        speak: normal;
-        voice-volume: loud;
-        voice-rate: medium;
-        voice-pitch: low;
-      }      
-      h1 {
-        font-size: 2.5rem;
-        text-align: center;
-        margin-block: 0.5em;
-      }
-      h2 {
-        font-size: 2rem;
-        margin-block: 0.5em;
-      }
-      p {
-        font-size: 1.2rem;
-        margin: 0.4rem 0;
-        margin-block-start: 0.6em;
-        margin-block-end: 0.6em;
-      }
-      li {
-        font-size: 1.2rem;
-        font-weight: bold;
-      }
-      #timer {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin: 0.2rem;
-      }
-      .hidden {
-        display: none;
-      }
-      .center {
-        text-align: center;
-      }
-      footer {
-        position: fixed;
-        bottom: 0px;
-        left: 0;
-        width: 100%;
-        background-color: #f2f2f2;
-        border-top: 1px solid #f0c7d4;
-        color: #655cc4;
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      #timeInquiry {
-        margin-top: 1em;
-        padding: 1em auto;
-        border: 1pt solid #079fdb;
-        speak: none;
-      }
-      strong {
-        font-weight: bold;
-      }
-      #violation {
-        color: #1081f3;
-        font-size: 1.5rem;
-        font-weight: bold;
-      }
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Exam Policies & Timer</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --primary: #5548e5;
+                --accent: #1081f3;
+                --danger: #c62828;
+                --panel: #f7f7fb;
+                --border: #d7d7ee;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                font-family: "Noto Sans", Arial, sans-serif;
+                max-width: 1080px;
+                margin: 0 auto;
+                padding: 1rem 1rem 5rem;
+                line-height: 1.5;
+                color: #1f1f1f;
+            }
+            h1 {
+                font-size: 2.5rem;
+                text-align: center;
+                margin-block: 0.5em;
+            }
+            h2 {
+                font-size: 2rem;
+                margin-block: 0.5em;
+            }
+            p {
+                font-size: 1.2rem;
+                margin-block: 0.6em;
+            }
+            li {
+                font-size: 1.2rem;
+                font-weight: bold;
+                margin-bottom: 0.5rem;
+            }
+            .center {
+                text-align: center;
+            }
+            .hidden {
+                display: none;
+            }
+            .panel {
+                background: var(--panel);
+                border: 1px solid var(--border);
+                border-radius: 1rem;
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+            input[type="number"] {
+                width: 10rem;
+                padding: 0.45rem 0.6rem;
+                border: 1px solid var(--border);
+                border-radius: 0.5rem;
+                font-size: 1.1rem;
+                text-align: center;
+            }
+            button {
+                cursor: pointer;
+                border: none;
+                border-radius: 0.75rem;
+                padding: 0.75rem 1.25rem;
+                background: var(--primary);
+                color: #fff;
+                font-weight: bold;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+            }
+            button:hover {
+                opacity: 0.92;
+            }
+            button:disabled {
+                cursor: not-allowed;
+                opacity: 0.55;
+            }
 
-      @media (max-width: 600px) {
-        body {
-          font-size: 0.9rem;
-        }
+            /* ✅ Added: focus-visible styles (keyboard users) */
+            button:focus-visible {
+                outline: 3px solid var(--accent);
+                outline-offset: 3px;
+            }
+            input[type="number"]:focus-visible {
+                outline: 3px solid var(--accent);
+                outline-offset: 3px;
+            }
+            [contenteditable="true"]:focus-visible {
+                outline: 3px solid var(--accent);
+                outline-offset: 3px;
+                border-radius: 0.35rem;
+            }
 
-        h1 {
-          font-size: 1.75rem;
-        }
-        h2 {
-          font-size: 1.25rem;
-        }
+            /* Collapse setup panel after start */
+            .collapsed {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                padding: 0;
+                margin: 0;
+                border: none;
+                transition: all 0.4s ease;
+            }
+            #displayTotalTime {
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: blue;
+            }
+            /* Countdown stays in normal flow */
+            #displayTimer {
+                font-size: 3rem;
+                font-weight: bold;
+                color: var(--primary);
+                margin: 1.5rem 0;
+            }
+            #examEndTime {
+                font-size: 1rem;
+                color: #444;
+                margin-top: 0.25rem;
+            }
+            #refreshNote {
+                font-size: 0.95rem;
+                color: #666;
+                margin-top: 0.25rem;
+            }
+            #violation {
+                color: var(--accent);
+                font-size: 1.5rem;
+                font-weight: bold;
+            }
+            /* Time's up overlay */
+            #timesUpOverlay {
+                display: none; /* hidden by default */
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.55);
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            }
+            /* Only show when JS adds .show */
+            #timesUpOverlay.show {
+                display: flex;
+            }
+            #timesUpCard {
+                background: #fff;
+                border-radius: 1.25rem;
+                padding: 2rem 2.5rem;
+                text-align: center;
+                box-shadow: 0 0 30px rgba(0, 0, 0, 0.35);
+                width: min(92vw, 600px);
+            }
+            #timesUpCard h2 {
+                margin: 0 0 0.75rem;
+                color: var(--danger);
+                font-size: 2.75rem;
+            }
+            #timesUpCard p {
+                margin: 0;
+                font-size: 1.5rem;
+                color: #333;
+            }
+            /* Extension popup overlay */
+            #extendOverlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.5);
+                align-items: center;
+                justify-content: center;
+                z-index: 10001;
+            }
+            #extendOverlay.show {
+                display: flex;
+            }
+            #extendCard {
+                background: #fff;
+                border-radius: 1.25rem;
+                padding: 2rem;
+                text-align: center;
+                width: min(90vw, 420px);
+                box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+            }
+            #extendCard h2 {
+                margin-bottom: 0.5rem;
+                color: var(--primary);
+            }
+            #extendInput {
+                width: 8rem;
+                padding: 0.5rem;
+                font-size: 1.1rem;
+                text-align: center;
+                border: 1px solid var(--border);
+                border-radius: 0.5rem;
+                margin-top: 0.5rem;
+            }
+            footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background-color: #f2f2f2;
+                border-top: 1px solid #f0c7d4;
+                color: #655cc4;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 0.4rem;
+            }
+            #localTime {
+                font-size: 1.5rem;
+                font-weight: bold;
+            }
+            @media (max-width: 600px) {
+                h1 {
+                    font-size: 1.75rem;
+                }
+                h2 {
+                    font-size: 1.25rem;
+                }
+                p,
+                li {
+                    font-size: 0.95rem;
+                }
+                #displayTimer {
+                    font-size: 2.25rem;
+                }
+                #localTime {
+                    font-size: 1rem;
+                }
+            }
+        </style>
+    </head>
 
-        p, li{
-          font-size: 0.9rem;
-        }
+    <body>
+        <!-- Time's up overlay -->
+        <div
+            id="timesUpOverlay"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Time is up"
+            aria-hidden="true"
+        >
+            <div id="timesUpCard">
+                <h2>Time’s up!</h2>
+                <p>Please stop writing and prepare submitting your exam.</p>
+                <button
+                    id="closeTimesUpBtn"
+                    type="button"
+                    style="margin-top: 1rem"
+                >
+                    Dismiss
+                </button>
+            </div>
+        </div>
 
-        footer {
-          font-size: 1.25rem;
-        }
+        <!-- Extension overlay -->
+        <div id="extendOverlay" aria-hidden="true">
+            <div id="extendCard">
+                <h2>Extend Time</h2>
+                <p>Enter minutes to extend:</p>
+                <input
+                    type="number"
+                    id="extendInput"
+                    min="1"
+                    step="1"
+                    placeholder="Minutes"
+                />
+                <div style="margin-top: 1rem">
+                    <button id="confirmExtendBtn" type="button">Apply</button>
+                    <button
+                        id="cancelExtendBtn"
+                        type="button"
+                        style="background: #aaa; margin-left: 0.5rem"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
 
-        #timeInquiry {
-          font-size: 0.9rem;
-        }
+        <main>
+            <h1>Exam Policies & Timer</h1>
 
-        ol, ul {
-          margin-left: 1.5rem;
-          padding-left: 1.5rem;
-        }
-      }
-    </style>
-  </head>
-  <body aria-live='polite'>
-    <!-- Total Time Inquiry -->
-    <div id="timeInquiry" class="center" aria-hidden="true">
-      <p>
-        Please enter the total time in minutes in the box below to initiate the timer.
-      </p>
-      <input type="number" id="totalTime" min="1" required />
-      <p>To start over, please refresh the page.</p>
-    </div>
+            <section id="timeInquiry" class="panel center">
+                <p>
+                    Please enter the <strong>exam length</strong> in minutes,
+                    then select <strong>Start Timer</strong>.
+                </p>
+                <div style="margin-top: 0.5rem">
+                    <label for="totalTime" class="hidden"
+                        >Total time in minutes</label
+                    >
+                    <input
+                        type="number"
+                        id="totalTime"
+                        min="1"
+                        step="1"
+                        required
+                        inputmode="numeric"
+                        aria-label="Total exam time in minutes"
+                    />
+                </div>
+                <div style="margin-top: 1rem">
+                    <button id="timer" type="button">Start Timer</button>
+                </div>
+                <p id="refreshNote" class="center">
+                    To restart the timer, refresh the page.
+                </p>
+            </section>
 
-    <!-- Total Time Display -->
-    <div class="center">
-      <p>
-        <span id="displayTotalTime" contenteditable="true"></span>
-      </p>
-    </div>
-    <!-- Countdown Timer Inquiry -->
-    <div class="center">
-      <!-- <p>Please click the button to start the countdown timer:</p> -->
-      <button id="timer" class="center" onclick="startTimer()" aria-hidden="true">
-        Start Timer
-      </button>
-      <p id="displayTimer" class="hidden center" aria-hidden="true"></p>
-    </div>
+            <!-- Timer content -->
+            <section
+                id="TimerMessage"
+                class="center collapsed"
+                aria-live="polite"
+            >
+                <p>
+                    <span id="editableLabel" contenteditable="true">
+                        Exam duration:
+                    </span>
+                    <span id="displayTotalTime"></span>
+                </p>
+                <p id="displayTimer">Time Remaining: --</p>
+                <p id="examEndTime"></p>
+            </section>
 
-    <div contenteditable="true" spellcheck="true">
-      <h2>Exam policies</h2>
-      <ol>
-        <li>Keep your desk clear of all items except approved materials (e.g., pens, pencils, erasers, and a scientific calculator).</li>
-        <li>Programmable calculators are not allowed. All personal electronic devices must be turned off and kept out of sight.</li>
-        <li>Do not look around or communicate with others during the exam. If you need to clarify a question, please raise your hand.</li>
-        <li>No breaks are allowed during the exam. Please use the restroom before the exam begins.</li>
-      </ol>
-      <p id="violation">
-        Violations of these policies will result in disqualification or other disciplinary actions.
-      </p>
-    </div>
+            <!-- Policy content -->
+            <div id="policyContent" contenteditable="true" spellcheck="true">
+                <ol>
+                    <li>
+                        Please keep your desk clear. Only use approved
+                        materials: pens, pencils, erasers, and a
+                        non-programmable scientific calculator.
+                    </li>
+                    <li>
+                        All phones, smartwatches, earbuds, and other electronic
+                        devices must be turned off and put away for the entire
+                        exam.
+                    </li>
+                    <li>
+                        During the exam, do not look at others’ work or
+                        communicate. If you have a question, raise your hand and
+                        I will assist you.
+                    </li>
+                    <li>
+                        You will need to remain in the room once the exam
+                        begins, so please take care of any breaks beforehand.
+                    </li>
+                </ol>
+                <p id="violation">
+                    Any violation of these rules will be considered academic
+                    misconduct and may result in a zero on the exam or further
+                    disciplinary action.
+                </p>
+            </div>
+        </main>
 
-    <!-- Current Local Time Display -->
-    <footer>
-      <span id="localTime" aria-hidden="true"></span>
-    </footer>
+        <footer>
+            <span id="localTime" aria-hidden="true"></span>
+        </footer>
 
-    <script>
-      // Convert total time to hours and minutes and display
-      function displayTotalTime() {
-        document.getElementById("timeInquiry").style.display = "none";
+        <script>
+            // ==============================
+            // CONFIG
+            // ==============================
+            const TICK_MS = 250;
 
-        var totalTime = parseInt(document.getElementById("totalTime").value);
-        var hours = Math.floor(totalTime / 60);
-        var minutes = totalTime % 60;
-        var displayString = "The total time of the Exam is ";
-        if (hours > 0) {
-          displayString += hours;
-          if (hours == 1) {
-            displayString += " hour ";
-          } else {
-            displayString += " hours ";
-          }
-        }
-        if (minutes > 0) {
-          displayString += minutes;
-          if (minutes == 1) {
-            displayString += " minute";
-          } else {
-            displayString += " minutes";
-          }
-          if (hours > 0) {
-            displayString += ", equivalently, " + totalTime + " minutes.";
-          } else {
-            displayString += ".";
-          }
-        }
-        var totalTimeDisplay = document.getElementById("displayTotalTime");
-        totalTimeDisplay.style.fontSize = "1.5rem";
-        totalTimeDisplay.style.fontWeight = "bold";
-        totalTimeDisplay.style.color = "blue";
-        totalTimeDisplay.innerHTML = displayString;
+            // ==============================
+            // STATE
+            // ==============================
+            let timerInterval = null;
+            let endTimeMs = null;
+            let examStarted = false;
+            let timerStopped = false;
 
-        // Remove hidden class from other elements
-        var hiddenElements = document.getElementsByClassName("hidden");
-        while (hiddenElements.length) {
-          hiddenElements[0].classList.remove("hidden");
-        }
-      }
+            // ==============================
+            // DOM
+            // ==============================
+            const elTotalTime = document.getElementById("totalTime");
+            const elStartBtn = document.getElementById("timer");
+            const elDisplayTimer = document.getElementById("displayTimer");
+            const elTimerMessage = document.getElementById("TimerMessage");
+            const elDisplayTotalTime =
+                document.getElementById("displayTotalTime");
+            const elExamEndTime = document.getElementById("examEndTime");
+            const elTimeInquiry = document.getElementById("timeInquiry");
+            const elLocalTime = document.getElementById("localTime");
+            const elTimesUpOverlay = document.getElementById("timesUpOverlay");
+            const elCloseTimesUpBtn =
+                document.getElementById("closeTimesUpBtn");
 
-      // Start countdown timer
-      function startTimer() {
-        document.getElementById("timer").style.display = "none";
-        var totalTimeLeft = parseInt(
-          document.getElementById("totalTime").value
-        );
-        // in minutes
-        var timeLeft = totalTimeLeft * 60; // in seconds
+            const extendOverlay = document.getElementById("extendOverlay");
+            const extendInput = document.getElementById("extendInput");
+            const confirmExtendBtn =
+                document.getElementById("confirmExtendBtn");
+            const cancelExtendBtn = document.getElementById("cancelExtendBtn");
 
-        var interval = setInterval(function () {
-          var hoursleft = Math.floor(timeLeft / 3600);
-          var minutesleft = Math.floor((timeLeft - hoursleft * 3600) / 60);
-          var secondsleft = timeLeft % 60;
+            elCloseTimesUpBtn.addEventListener("click", closeTimesUpOverlay);
 
-          var timerDisplay = document.getElementById("displayTimer");
-          timerDisplay.style.fontSize = "3rem";
-          timerDisplay.style.fontWeight = "bold";
-          timerDisplay.style.color = "#5548e5";
-          timerDisplay.style.margin = "2rem";
-          var displayTimer = "Time Remaining: ";
-          if (hoursleft > 0) {
-            displayTimer += hoursleft + "h ";
-          }
-          displayTimer += minutesleft + "m " + secondsleft + "s";
-          timerDisplay.innerHTML = displayTimer;
+            // ==============================
+            // FULLSCREEN (kept because startTimer calls it)
+            // ==============================
+            function enterFullscreen() {
+                const el = document.documentElement;
+                if (el.requestFullscreen) el.requestFullscreen();
+                else if (el.webkitRequestFullscreen)
+                    el.webkitRequestFullscreen();
+            }
 
-          timeLeft--;
+            // ==============================
+            // FORMATTERS
+            // ==============================
+            function formatDuration(sec) {
+                const s = Math.max(0, sec);
+                const h = Math.floor(s / 3600);
+                const m = Math.floor((s % 3600) / 60);
+                const r = s % 60;
+                let out = "";
+                if (h > 0) out += `${h}h `;
+                out += `${m}m ${String(r).padStart(2, "0")}s`;
+                return out;
+            }
 
-          if (timeLeft < 0) {
-            clearInterval(interval);
-            timerDisplay.innerHTML = "Time's up!";
-          }
-        }, 1000);
-      }
+            function formatTotalTime(mins) {
+                const h = Math.floor(mins / 60);
+                const m = mins % 60;
+                let str = "The total time of the exam is ";
+                if (h > 0) str += `${h} ${h === 1 ? "hour" : "hours"} `;
+                if (m > 0) str += `${m} ${m === 1 ? "minute" : "minutes"}`;
+                if (h > 0 && m > 0) str += `, equivalently, ${mins} minutes.`;
+                else str += ".";
+                return str;
+            }
 
-      // Call displayTotalTime function when totalTime input changes
-      document
-        .getElementById("totalTime")
-        .addEventListener("change", displayTotalTime);
+            // ==============================
+            // BEFOREUNLOAD (auto-enabled on start; auto-disabled on stop)
+            // ==============================
+            function handleBeforeUnload(e) {
+                if (!examStarted || timerStopped) return;
+                e.preventDefault();
+                e.returnValue = "";
+            }
 
-      // Function to update local time display
-      function updateLocalTime() {
-        var now = new Date();
-        var localTime = now.toLocaleString();
-        var localTimeDisplay = document.getElementById("localTime");
-        localTimeDisplay.innerHTML = "Current local time: " + localTime;
-        localTimeDisplay.style.fontSize = "2rem";
-        localTimeDisplay.style.fontWeight = "bold";
-      }
-      // Update local time display every second
-      setInterval(updateLocalTime, 1000);
-    </script>
-  </body>
+            // ==============================
+            // STOP TIMER (only place overlay is shown)
+            // ==============================
+            function stopTimer() {
+                if (timerStopped) return;
+                timerStopped = true;
+
+                clearInterval(timerInterval);
+                timerInterval = null;
+
+                // mark not running to avoid any future calls doing anything
+                endTimeMs = null;
+
+                // auto-disable confirmation once time is up
+                window.removeEventListener("beforeunload", handleBeforeUnload);
+
+                elDisplayTimer.textContent = "Time's up!";
+                elDisplayTimer.style.color = "#c62828";
+                document.title = "Time's up!";
+
+                // overlay shown ONLY after timer actually stops
+                if (examStarted) {
+                    elTimesUpOverlay.classList.add("show");
+                    elTimesUpOverlay.setAttribute("aria-hidden", "false");
+                    setTimeout(() => elCloseTimesUpBtn.focus(), 0);
+                }
+            }
+
+            // ==============================
+            // TIME'S UP
+            // ==============================
+            function closeTimesUpOverlay() {
+                elTimesUpOverlay.classList.remove("show");
+                elTimesUpOverlay.setAttribute("aria-hidden", "true");
+            }
+
+            // ==============================
+            // TIMER UPDATE
+            // ==============================
+            function updateTimerDisplay() {
+                if (!endTimeMs || timerStopped) return;
+
+                const remainingMs = endTimeMs - Date.now();
+                const remainingSec = Math.ceil(remainingMs / 1000);
+
+                if (remainingSec <= 0) {
+                    stopTimer();
+                    return;
+                }
+
+                const txt = formatDuration(remainingSec);
+                elDisplayTimer.textContent = `Time Remaining: ${txt}`;
+                document.title = txt;
+            }
+
+            // ==============================
+            // EXTENSION POPUP
+            // ==============================
+            function triggerTimeExtension() {
+                extendOverlay.classList.add("show");
+                extendOverlay.setAttribute("aria-hidden", "false");
+                extendInput.value = "";
+                setTimeout(() => extendInput.focus(), 50);
+            }
+
+            function closeExtendOverlay() {
+                extendOverlay.classList.remove("show");
+                extendOverlay.setAttribute("aria-hidden", "true");
+            }
+
+            function applyExtensionFromPopup() {
+                const mins = parseInt(extendInput.value, 10);
+
+                if (!Number.isFinite(mins) || mins <= 0) {
+                    alert("Please enter a valid number of minutes.");
+                    extendInput.focus();
+                    return;
+                }
+
+                closeExtendOverlay();
+
+                // If time already ended → restart
+                if (timerStopped) {
+                    restartTimer(mins);
+                } else {
+                    extendTime(mins);
+                }
+            }
+
+            function extendTime(extraMinutes) {
+                if (!examStarted || timerStopped) return;
+
+                // Extend timer end
+                endTimeMs += extraMinutes * 60 * 1000;
+
+                // Try to update visible total time cleanly
+                const currentText = elDisplayTotalTime.textContent;
+                const match = currentText.match(/\d+/);
+
+                if (match) {
+                    const updated = parseInt(match[0], 10) + extraMinutes;
+                    elDisplayTotalTime.textContent = updated + " minutes";
+                } else {
+                    elDisplayTotalTime.textContent +=
+                        " +" + extraMinutes + " min";
+                }
+
+                // Update end time label
+                elExamEndTime.textContent =
+                    "Scheduled end time: " +
+                    new Date(endTimeMs).toLocaleString();
+
+                // Refresh countdown immediately
+                updateTimerDisplay();
+            }
+
+            function restartTimer(mins) {
+                timerStopped = false;
+                examStarted = true;
+
+                // Restart timer from NOW
+                endTimeMs = Date.now() + mins * 60 * 1000;
+
+                // Re-enable unload protection
+                window.addEventListener("beforeunload", handleBeforeUnload);
+
+                // Update display
+                elDisplayTotalTime.textContent = mins + " minutes";
+                elExamEndTime.textContent =
+                    "Scheduled end time: " +
+                    new Date(endTimeMs).toLocaleString();
+
+                elDisplayTimer.style.color = "var(--primary)";
+                elDisplayTimer.textContent = "";
+
+                // Restart interval
+                clearInterval(timerInterval);
+                timerInterval = setInterval(updateTimerDisplay, TICK_MS);
+
+                // Hide overlay if visible
+                elTimesUpOverlay.classList.remove("show");
+                elTimesUpOverlay.setAttribute("aria-hidden", "true");
+
+                updateTimerDisplay();
+            }
+
+            confirmExtendBtn.addEventListener("click", applyExtensionFromPopup);
+            cancelExtendBtn.addEventListener("click", closeExtendOverlay);
+            extendInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") applyExtensionFromPopup();
+            });
+
+            // Shortcut: Ctrl + Shift + E
+            document.addEventListener("keydown", (e) => {
+                if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "e") {
+                    e.preventDefault();
+                    triggerTimeExtension();
+                }
+            });
+
+            // ==============================
+            // START TIMER
+            // ==============================
+            function startTimer() {
+                const mins = parseInt(elTotalTime.value, 10);
+                if (!Number.isFinite(mins) || mins < 1) {
+                    alert("Please enter a valid exam time (minimum 1 minute).");
+                    elTotalTime.focus();
+                    return;
+                }
+
+                examStarted = true;
+                timerStopped = false;
+
+                // hide overlay in case of reuse (shouldn't happen without refresh, but safe)
+                closeTimesUpOverlay();
+
+                // enable unload protection once exam starts
+                window.addEventListener("beforeunload", handleBeforeUnload);
+
+                // collapse setup
+                elTimeInquiry.classList.add("collapsed");
+
+                endTimeMs = Date.now() + mins * 60 * 1000;
+
+                elDisplayTotalTime.textContent =
+                    " " +
+                    formatTotalTime(mins)
+                        .replace("The total time of the exam is", "")
+                        .trim();
+
+                elExamEndTime.textContent =
+                    "Scheduled end time: " +
+                    new Date(endTimeMs).toLocaleString();
+
+                elDisplayTimer.style.color = "var(--primary)";
+                elTimerMessage.classList.remove("collapsed");
+
+                elTotalTime.disabled = true;
+                elStartBtn.disabled = true;
+
+                updateTimerDisplay();
+
+                clearInterval(timerInterval);
+                timerInterval = setInterval(updateTimerDisplay, TICK_MS);
+
+                // attempt fullscreen (will usually work because Start Timer is a user gesture)
+                enterFullscreen();
+            }
+
+            elStartBtn.addEventListener("click", startTimer);
+            elTotalTime.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") startTimer();
+            });
+
+            document.addEventListener("visibilitychange", updateTimerDisplay);
+            window.addEventListener("focus", updateTimerDisplay);
+
+            // ==============================
+            // LOCAL TIME
+            // ==============================
+            function updateLocalTime() {
+                elLocalTime.textContent =
+                    "Current local time: " + new Date().toLocaleString();
+            }
+            updateLocalTime();
+            setInterval(updateLocalTime, 1000);
+        </script>
+    </body>
 </html>
