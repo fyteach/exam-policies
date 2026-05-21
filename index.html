@@ -17,6 +17,11 @@
                 --danger: #c62828;
                 --panel: #f7f7fb;
                 --border: #d7d7ee;
+                --surface: #ffffff;
+                --text: #1f1f1f;
+                --muted: #566173;
+                --bg-top: #f8faff;
+                --bg-bottom: #eef2ff;
             }
             * {
                 box-sizing: border-box;
@@ -27,12 +32,16 @@
                 margin: 0 auto;
                 padding: 1rem 1rem 5rem;
                 line-height: 1.5;
-                color: #1f1f1f;
+                color: var(--text);
+                background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+                min-height: 100vh;
             }
             h1 {
                 font-size: 2.5rem;
                 text-align: center;
                 margin-block: 0.5em;
+                color: #20263a;
+                letter-spacing: 0.02em;
             }
             h2 {
                 font-size: 2rem;
@@ -57,8 +66,9 @@
                 background: var(--panel);
                 border: 1px solid var(--border);
                 border-radius: 1rem;
-                padding: 1rem;
+                padding: 1.1rem;
                 margin: 1rem 0;
+                box-shadow: 0 8px 24px rgba(50, 70, 120, 0.08);
             }
             input[type="number"] {
                 width: 10rem;
@@ -73,13 +83,15 @@
                 border: none;
                 border-radius: 0.75rem;
                 padding: 0.75rem 1.25rem;
-                background: var(--primary);
+                background: linear-gradient(135deg, #5448e6, #2f66e6);
                 color: #fff;
                 font-weight: bold;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+                box-shadow: 0 8px 16px rgba(40, 60, 120, 0.25);
+                transition: transform 0.15s ease, opacity 0.15s ease;
             }
             button:hover {
                 opacity: 0.92;
+                transform: translateY(-1px);
             }
             button:disabled {
                 cursor: not-allowed;
@@ -111,32 +123,79 @@
                 border: none;
                 transition: all 0.4s ease;
             }
+            #TimerMessage {
+                background: var(--surface);
+                border: 1px solid #d9e1ff;
+                border-radius: 1rem;
+                margin-top: 1rem;
+                padding: 1.1rem 1rem;
+                box-shadow: 0 12px 28px rgba(38, 59, 117, 0.12);
+            }
             #displayTotalTime {
-                font-size: 1.5rem;
+                display: inline-block;
+                font-size: 1.35rem;
                 font-weight: bold;
-                color: blue;
+                color: #1f4b9b;
+                background: #edf3ff;
+                border: 1px solid #c8dafd;
+                border-radius: 0.75rem;
+                padding: 0.35rem 0.7rem;
             }
             /* Countdown stays in normal flow */
             #displayTimer {
                 font-size: 3rem;
                 font-weight: bold;
-                color: var(--primary);
-                margin: 1.5rem 0;
+                color: #10224d;
+                margin: 1rem auto;
+                background: linear-gradient(135deg, #eef4ff, #d9e7ff);
+                border-radius: 1rem;
+                padding: 0.7rem 1rem;
+                width: min(100%, 760px);
+                border: 1px solid #bfd3ff;
+                box-shadow: 0 8px 18px rgba(56, 88, 160, 0.16);
             }
             #examEndTime {
                 font-size: 1rem;
-                color: #444;
+                color: var(--muted);
                 margin-top: 0.25rem;
+                font-weight: 700;
             }
             #refreshNote {
                 font-size: 0.95rem;
-                color: #666;
+                color: var(--muted);
                 margin-top: 0.25rem;
             }
+            #policyContent {
+                background: var(--surface);
+                border: 1px solid #dce4f8;
+                border-radius: 1rem;
+                padding: 1rem 1.1rem;
+                box-shadow: 0 10px 24px rgba(44, 64, 120, 0.08);
+            }
+            #policyContent ol {
+                margin: 0;
+                padding-left: 1.5rem;
+            }
+            #policyContent li {
+                font-size: 1.1rem;
+                font-weight: 600;
+                line-height: 1.65;
+                margin-bottom: 0;
+                color: #24324a;
+            }
+            #policyContent li + li {
+                margin-top: 0.65rem;
+            }
             #violation {
-                color: var(--accent);
-                font-size: 1.5rem;
+                color: #9f1f38;
+                font-size: 1.25rem;
                 font-weight: bold;
+                margin-top: 1rem;
+                background: #fff0f3;
+                border: 1px solid #ffc8d1;
+                border-left: 0.35rem solid #d04764;
+                border-radius: 0.75rem;
+                padding: 0.75rem 0.9rem;
             }
             /* Time's up overlay */
             #timesUpOverlay {
@@ -209,13 +268,14 @@
                 bottom: 0;
                 left: 0;
                 width: 100%;
-                background-color: #f2f2f2;
-                border-top: 1px solid #f0c7d4;
-                color: #655cc4;
+                background: rgba(255, 255, 255, 0.9);
+                border-top: 1px solid #d8def3;
+                color: #394265;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 padding: 0.4rem;
+                backdrop-filter: blur(5px);
             }
             #localTime {
                 font-size: 1.5rem;
@@ -234,6 +294,14 @@
                 }
                 #displayTimer {
                     font-size: 2.25rem;
+                    padding: 0.65rem 0.7rem;
+                }
+                #displayTotalTime {
+                    font-size: 1.05rem;
+                }
+                #policyContent li {
+                    font-size: 1rem;
+                    line-height: 1.55;
                 }
                 #localTime {
                     font-size: 1rem;
@@ -252,7 +320,7 @@
             aria-hidden="true"
         >
             <div id="timesUpCard">
-                <h2>Time’s up!</h2>
+                <h2>Time's up!</h2>
                 <p>Please stop writing and prepare submitting your exam.</p>
                 <button
                     id="closeTimesUpBtn"
@@ -326,9 +394,6 @@
                 aria-live="polite"
             >
                 <p>
-                    <span id="editableLabel" contenteditable="true">
-                        Exam duration:
-                    </span>
                     <span id="displayTotalTime"></span>
                 </p>
                 <p id="displayTimer">Time Remaining: --</p>
@@ -383,6 +448,10 @@
             let endTimeMs = null;
             let examStarted = false;
             let timerStopped = false;
+            let baseExamMinutes = 0;
+            let extraExamMinutes = 0;
+            let isExtraOnlyMode = false;
+            let extraOnlyMinutes = 0;
 
             // ==============================
             // DOM
@@ -411,6 +480,7 @@
             // ==============================
             // FULLSCREEN (kept because startTimer calls it)
             // ==============================
+            // Requests fullscreen mode when the timer begins.
             function enterFullscreen() {
                 const el = document.documentElement;
                 if (el.requestFullscreen) el.requestFullscreen();
@@ -421,6 +491,7 @@
             // ==============================
             // FORMATTERS
             // ==============================
+            // Converts seconds into a compact h/m/s countdown string.
             function formatDuration(sec) {
                 const s = Math.max(0, sec);
                 const h = Math.floor(s / 3600);
@@ -432,20 +503,32 @@
                 return out;
             }
 
-            function formatTotalTime(mins) {
-                const h = Math.floor(mins / 60);
-                const m = mins % 60;
-                let str = "The total time of the exam is ";
-                if (h > 0) str += `${h} ${h === 1 ? "hour" : "hours"} `;
-                if (m > 0) str += `${m} ${m === 1 ? "minute" : "minutes"}`;
-                if (h > 0 && m > 0) str += `, equivalently, ${mins} minutes.`;
-                else str += ".";
-                return str;
+            // Renders normal mode total time with optional included extension text.
+            function renderDisplayTotalTime() {
+                const totalMinutes = baseExamMinutes + extraExamMinutes;
+                const totalPart = `${totalMinutes} minute${
+                    totalMinutes === 1 ? "" : "s"
+                }`;
+                const extraPart = `${extraExamMinutes} extra minute${
+                    extraExamMinutes === 1 ? "" : "s"
+                }`;
+
+                elDisplayTotalTime.textContent =
+                    `Total Exam Time: ${totalPart}` +
+                    (extraExamMinutes > 0 ? ` (includes ${extraPart}).` : ".");
+            }
+
+            // Renders post-time-up extension-only text.
+            function renderExtraOnlyTime() {
+                elDisplayTotalTime.textContent = `EXTRA Time: ${extraOnlyMinutes} minute${
+                    extraOnlyMinutes === 1 ? "" : "s"
+                }.`;
             }
 
             // ==============================
             // BEFOREUNLOAD (auto-enabled on start; auto-disabled on stop)
             // ==============================
+            // Warns before accidental page close while an active exam is running.
             function handleBeforeUnload(e) {
                 if (!examStarted || timerStopped) return;
                 e.preventDefault();
@@ -455,6 +538,7 @@
             // ==============================
             // STOP TIMER (only place overlay is shown)
             // ==============================
+            // Stops countdown updates and opens the Time's Up dialog.
             function stopTimer() {
                 if (timerStopped) return;
                 timerStopped = true;
@@ -483,6 +567,7 @@
             // ==============================
             // TIME'S UP
             // ==============================
+            // Hides the Time's Up overlay dialog.
             function closeTimesUpOverlay() {
                 elTimesUpOverlay.classList.remove("show");
                 elTimesUpOverlay.setAttribute("aria-hidden", "true");
@@ -491,6 +576,7 @@
             // ==============================
             // TIMER UPDATE
             // ==============================
+            // Recomputes remaining time and refreshes timer text/title.
             function updateTimerDisplay() {
                 if (!endTimeMs || timerStopped) return;
 
@@ -510,6 +596,7 @@
             // ==============================
             // EXTENSION POPUP
             // ==============================
+            // Opens the extension input overlay and focuses the input box.
             function triggerTimeExtension() {
                 extendOverlay.classList.add("show");
                 extendOverlay.setAttribute("aria-hidden", "false");
@@ -517,11 +604,13 @@
                 setTimeout(() => extendInput.focus(), 50);
             }
 
+            // Closes the extension input overlay.
             function closeExtendOverlay() {
                 extendOverlay.classList.remove("show");
                 extendOverlay.setAttribute("aria-hidden", "true");
             }
 
+            // Validates extension input then applies extra minutes.
             function applyExtensionFromPopup() {
                 const mins = parseInt(extendInput.value, 10);
 
@@ -535,28 +624,24 @@
 
                 // If time already ended → restart
                 if (timerStopped) {
-                    restartTimer(mins);
+                    restartTimer(mins, true);
                 } else {
                     extendTime(mins);
                 }
             }
 
+            // Adds minutes to the running timer and refreshes related labels.
             function extendTime(extraMinutes) {
                 if (!examStarted || timerStopped) return;
 
                 // Extend timer end
                 endTimeMs += extraMinutes * 60 * 1000;
-
-                // Try to update visible total time cleanly
-                const currentText = elDisplayTotalTime.textContent;
-                const match = currentText.match(/\d+/);
-
-                if (match) {
-                    const updated = parseInt(match[0], 10) + extraMinutes;
-                    elDisplayTotalTime.textContent = updated + " minutes";
+                if (isExtraOnlyMode) {
+                    extraOnlyMinutes += extraMinutes;
+                    renderExtraOnlyTime();
                 } else {
-                    elDisplayTotalTime.textContent +=
-                        " +" + extraMinutes + " min";
+                    extraExamMinutes += extraMinutes;
+                    renderDisplayTotalTime();
                 }
 
                 // Update end time label
@@ -568,9 +653,19 @@
                 updateTimerDisplay();
             }
 
-            function restartTimer(mins) {
+            // Restarts timer either as normal mode or extra-only mode after timeout.
+            function restartTimer(mins, afterTimesUp = false) {
                 timerStopped = false;
                 examStarted = true;
+                if (afterTimesUp) {
+                    isExtraOnlyMode = true;
+                    extraOnlyMinutes = mins;
+                } else {
+                    isExtraOnlyMode = false;
+                    extraOnlyMinutes = 0;
+                    baseExamMinutes = mins;
+                    extraExamMinutes = 0;
+                }
 
                 // Restart timer from NOW
                 endTimeMs = Date.now() + mins * 60 * 1000;
@@ -579,7 +674,8 @@
                 window.addEventListener("beforeunload", handleBeforeUnload);
 
                 // Update display
-                elDisplayTotalTime.textContent = mins + " minutes";
+                if (isExtraOnlyMode) renderExtraOnlyTime();
+                else renderDisplayTotalTime();
                 elExamEndTime.textContent =
                     "Scheduled end time: " +
                     new Date(endTimeMs).toLocaleString();
@@ -615,6 +711,7 @@
             // ==============================
             // START TIMER
             // ==============================
+            // Starts a new exam session from the entered duration.
             function startTimer() {
                 const mins = parseInt(elTotalTime.value, 10);
                 if (!Number.isFinite(mins) || mins < 1) {
@@ -625,6 +722,10 @@
 
                 examStarted = true;
                 timerStopped = false;
+                baseExamMinutes = mins;
+                extraExamMinutes = 0;
+                isExtraOnlyMode = false;
+                extraOnlyMinutes = 0;
 
                 // hide overlay in case of reuse (shouldn't happen without refresh, but safe)
                 closeTimesUpOverlay();
@@ -637,11 +738,7 @@
 
                 endTimeMs = Date.now() + mins * 60 * 1000;
 
-                elDisplayTotalTime.textContent =
-                    " " +
-                    formatTotalTime(mins)
-                        .replace("The total time of the exam is", "")
-                        .trim();
+                renderDisplayTotalTime();
 
                 elExamEndTime.textContent =
                     "Scheduled end time: " +
@@ -673,6 +770,7 @@
             // ==============================
             // LOCAL TIME
             // ==============================
+            // Updates the live local clock shown in the footer.
             function updateLocalTime() {
                 elLocalTime.textContent =
                     "Current local time: " + new Date().toLocaleString();
